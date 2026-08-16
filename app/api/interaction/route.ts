@@ -37,6 +37,8 @@ export async function POST(request: Request) {
         p_behaviors: body.behaviors ?? [],
         p_emotions: body.emotions ?? [],
         p_stance: body.stance ?? null,
+        p_dialogue: body.dialogue ?? null,
+        p_stage: body.stage ?? "role",
         p_event_code: "CARE2026",
       }),
       cache: "no-store",
