@@ -6,6 +6,8 @@ type RoleKey = "patient" | "partner" | "nurse";
 type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
 type ViewKey = "presenter" | "participant";
 type SurveySession = { sequenceNo: number; status: "active" | "closed"; startedAt: string; endedAt: string | null };
+type LiveResponse = { role: RoleKey; behaviors: string[]; emotions: string[]; stance: StanceKey | null };
+type LiveStats = { roleCounts: Record<RoleKey, number>; behaviorCounts: Record<RoleKey, number[]>; emotionCounts: Record<RoleKey, number[]>; stanceCounts: Record<RoleKey, Record<StanceKey, number>> };
 
 const roles: Record<RoleKey, { label: string; short: string; icon: string; color: string; quote: string; need: string }> = {
   patient: { label: "焦虑的孕妇", short: "孕妇", icon: "孕", color: "coral", quote: "我很痛，也不知道还要等多久。", need: "安全、被看见、可预期" },
@@ -84,6 +86,7 @@ export default function Home() {
   const [selectedStance, setSelectedStance] = useState<StanceKey | null>(null);
   const [connectedParticipants, setConnectedParticipants] = useState<number | null>(null);
   const [surveySession, setSurveySession] = useState<SurveySession | null>(null);
+  const [liveResponses, setLiveResponses] = useState<LiveResponse[]>([]);
 
   useEffect(() => {
     const refresh = async () => {
@@ -92,6 +95,7 @@ export default function Home() {
         const data = await response.json();
         if (response.ok && typeof data.participants === "number") setConnectedParticipants(data.participants);
         if (response.ok && data.session) setSurveySession(data.session);
+        if (response.ok && Array.isArray(data.responses)) setLiveResponses(data.responses);
       } catch { /* 保留现场最后一次成功数字 */ }
     };
     refresh();
@@ -137,12 +141,27 @@ export default function Home() {
     if (!response.ok) return window.alert(data.error || "操作失败");
     setSurveySession(data.session ?? null);
     setConnectedParticipants(0);
+    setLiveResponses([]);
     window.alert(action === "start" ? "新场次已经开始，画面统计已归零。" : "调查已经结束，资料已完整封存。" );
   };
 
-  const roleTotal = Object.values(roleCounts).reduce((a, b) => a + b, 0);
+  const liveStats = useMemo(() => {
+    const roleCounts = { patient: 0, partner: 0, nurse: 0 } as Record<RoleKey, number>;
+    const behaviorCounts = { patient: behaviors.patient.map(() => 0), partner: behaviors.partner.map(() => 0), nurse: behaviors.nurse.map(() => 0) } as Record<RoleKey, number[]>;
+    const emotionCounts = { patient: emotions.map(() => 0), partner: emotions.map(() => 0), nurse: emotions.map(() => 0) } as Record<RoleKey, number[]>;
+    const stanceCounts = { patient: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 }, partner: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 }, nurse: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 } } as Record<RoleKey, Record<StanceKey, number>>;
+    for (const response of liveResponses) {
+      if (!roles[response.role]) continue;
+      roleCounts[response.role]++;
+      response.behaviors?.forEach((item) => { const index = behaviors[response.role].indexOf(item); if (index >= 0) behaviorCounts[response.role][index]++; });
+      response.emotions?.forEach((item) => { const index = emotions.indexOf(item); if (index >= 0) emotionCounts[response.role][index]++; });
+      if (response.stance && stanceCounts[response.role][response.stance] !== undefined) stanceCounts[response.role][response.stance]++;
+    }
+    return { roleCounts, behaviorCounts, emotionCounts, stanceCounts };
+  }, [liveResponses]);
+  const roleTotal = Math.max(1, Object.values(liveStats.roleCounts).reduce((a, b) => a + b, 0));
   const progress = `${Math.min(step, 5) * 20}%`;
-  const maxEmotion = useMemo(() => Math.max(...Object.values(emotionCounts).flat()), []);
+  const maxEmotion = Math.max(1, ...Object.values(liveStats.emotionCounts).flat());
 
   const chooseRole = (nextRole: RoleKey) => {
     setRole(nextRole);
@@ -169,7 +188,7 @@ export default function Home() {
       </header>
 
       {view === "presenter" ? (
-        <PresenterView screen={presenterScreen} setScreen={setPresenterScreen} roleTotal={roleTotal} maxEmotion={maxEmotion} connectedParticipants={connectedParticipants} surveySession={surveySession} onSurveyControl={controlSurvey} />
+        <PresenterView screen={presenterScreen} setScreen={setPresenterScreen} roleTotal={roleTotal} maxEmotion={maxEmotion} connectedParticipants={connectedParticipants} surveySession={surveySession} onSurveyControl={controlSurvey} stats={liveStats} />
       ) : (
         <section className="experience-layout">
           <div className="experience-copy">
@@ -188,9 +207,9 @@ export default function Home() {
             <div className="mobile-progress"><span style={{ width: progress }} /></div>
             {step === 1 && <RoleStep onChoose={chooseRole} />}
             {step === 2 && role && <IcebergStep role={role} selectedBehaviors={selectedBehaviors} selectedEmotions={selectedEmotions} onBehavior={toggleBehavior} onEmotion={toggleEmotion} onNext={() => { void submitResponse("iceberg", null); setStep(3); }} />}
-            {step === 3 && <MobileResults onNext={() => setStep(4)} />}
+            {step === 3 && <MobileResults onNext={() => setStep(4)} stats={liveStats} />}
             {step === 4 && role && <StanceStep role={role} selected={selectedStance} onSelect={setSelectedStance} onNext={() => { void submitResponse("complete", selectedStance); setStep(5); }} />}
-            {step === 5 && role && <PeerResults role={role} selectedBehaviors={selectedBehaviors} selectedEmotions={selectedEmotions} selectedStance={selectedStance} />}
+            {step === 5 && role && <PeerResults role={role} selectedBehaviors={selectedBehaviors} selectedEmotions={selectedEmotions} selectedStance={selectedStance} stats={liveStats} />}
             {step > 1 && <button className="phone-back" onClick={() => setStep(step - 1)}>← 上一步</button>}
           </div>
         </section>
@@ -220,9 +239,9 @@ function IcebergStep({ role, selectedBehaviors, selectedEmotions, onBehavior, on
   </div>;
 }
 
-function MobileResults({ onNext }: { onNext: () => void }) {
+function MobileResults({ onNext, stats }: { onNext: () => void; stats: LiveStats }) {
   return <div className="mobile-content mobile-results"><span className="eyebrow">STEP 03 · 全场映照</span><h2>大家看见了什么？</h2><p>选择没有对错。差异本身，就是理解彼此的入口。</p>
-    {(Object.keys(roles) as RoleKey[]).map((role) => <div className={`mini-stat-card ${roles[role].color}`} key={role}><div><RoleAvatar role={role} /><span><strong>{roles[role].label}</strong><small>最高行为觉察</small></span></div><b>{behaviors[role][role === "patient" ? 3 : role === "partner" ? 0 : 1]}</b><div className="mini-emotions">{emotions.slice(0, 3).map((emotion, i) => <span key={emotion}>{emotion} {emotionCounts[role][i]}</span>)}</div></div>)}
+    {(Object.keys(roles) as RoleKey[]).map((role) => { const top = Math.max(...stats.behaviorCounts[role]); const topIndex = Math.max(0, stats.behaviorCounts[role].indexOf(top)); return <div className={`mini-stat-card ${roles[role].color}`} key={role}><div><RoleAvatar role={role} /><span><strong>{roles[role].label}</strong><small>{stats.roleCounts[role]} 人选择</small></span></div><b>{top ? behaviors[role][topIndex] : "等待现场回应"}</b><div className="mini-emotions">{emotions.slice(0, 3).map((emotion, i) => <span key={emotion}>{emotion} {stats.emotionCounts[role][i]}</span>)}</div></div>; })}
     <button className="primary-action" onClick={onNext}>下一步：他想说什么？ →</button>
   </div>;
 }
@@ -231,15 +250,17 @@ function StanceStep({ role, selected, onSelect, onNext }: { role: RoleKey; selec
   return <div className="mobile-content stance-step"><div className={`portrait-focus compact ${role}`}><img src="/scenario-maternity.png" alt={`${roles[role].label}人物特写`} /><div><RoleAvatar role={role} /><span><small>站在他的视角</small><strong>{roles[role].label}</strong></span></div></div><span className="eyebrow">STEP 04 · 萨提尔应对姿态</span><h2>此刻，他最想说哪一句？</h2><p>五句话分别对应一种应对姿态。先凭直觉选，再看看语言背后的保护方式。</p><div className="statement-list">{(Object.keys(stances) as StanceKey[]).map((key) => <button key={key} className={selected === key ? "selected" : ""} onClick={() => onSelect(key)}><i style={{ background: stances[key].color }}>{selected === key ? "✓" : ""}</i><span><strong>「{statements[role][key]}」</strong>{selected === key && <small><b>{stances[key].label}</b> · {stances[key].note}</small>}</span></button>)}</div>{selected && <><div className="submitted">✓ 已送出：{stances[selected].label}。讲者画面已更新全场统计。</div><button className="primary-action" onClick={onNext}>下一步：看看和我一样的人 →</button></>}</div>;
 }
 
-function PeerResults({ role, selectedBehaviors, selectedEmotions, selectedStance }: { role: RoleKey; selectedBehaviors: string[]; selectedEmotions: string[]; selectedStance: StanceKey | null }) {
-  const total = Object.values(stanceCounts[role]).reduce((a, b) => a + b, 0);
-  return <div className="mobile-content peer-results"><div className={`portrait-focus compact ${role}`}><img src="/scenario-maternity.png" alt={`${roles[role].label}人物特写`} /><div><RoleAvatar role={role} /><span><small>同角色参与者</small><strong>{roles[role].label} · {roleCounts[role]} 人</strong></span></div></div><span className="eyebrow">STEP 05 · 同角色共鸣</span><h2>和你站在同一位置的人，看见了什么？</h2><p>以下只统计同样选择「{roles[role].label}」的参与者。</p><section className="peer-section"><header><span>行为选择</span><small>你的选择以 ✓ 标记</small></header>{behaviors[role].map((item, i) => <div className="peer-bar" key={item}><div><span>{selectedBehaviors.includes(item) ? "✓ " : ""}{item}</span><b>{behaviorCounts[role][i]}</b></div><i><b style={{ width: `${behaviorCounts[role][i] / Math.max(...behaviorCounts[role]) * 100}%` }} /></i></div>)}</section><section className="peer-section"><header><span>内在情绪</span><small>可看见相似与差异</small></header><div className="peer-emotion-grid">{emotions.map((item, i) => <div className={selectedEmotions.includes(item) ? "mine" : ""} key={item}><span>{selectedEmotions.includes(item) ? "✓ " : ""}{item}</span><b>{emotionCounts[role][i]}</b></div>)}</div></section><section className="peer-section"><header><span>应对姿态</span><small>共 {total} 份回应</small></header><div className="peer-stance-list">{(Object.keys(stances) as StanceKey[]).map((key) => <div className={selectedStance === key ? "mine" : ""} key={key}><i style={{ background: stances[key].color }} /><span>{selectedStance === key ? "✓ " : ""}{stances[key].label}</span><b>{stanceCounts[role][key]}</b></div>)}</div></section><div className="reflection-card"><strong>带走一个觉察</strong><p>相同的角色，不一定产生相同的感受与反应。理解差异，是一致性沟通的开始。</p></div></div>;
+function PeerResults({ role, selectedBehaviors, selectedEmotions, selectedStance, stats }: { role: RoleKey; selectedBehaviors: string[]; selectedEmotions: string[]; selectedStance: StanceKey | null; stats: LiveStats }) {
+  const total = Object.values(stats.stanceCounts[role]).reduce((a, b) => a + b, 0);
+  const behaviorMax = Math.max(1, ...stats.behaviorCounts[role]);
+  return <div className="mobile-content peer-results"><div className={`portrait-focus compact ${role}`}><img src="/scenario-maternity.png" alt={`${roles[role].label}人物特写`} /><div><RoleAvatar role={role} /><span><small>同角色参与者</small><strong>{roles[role].label} · {stats.roleCounts[role]} 人</strong></span></div></div><span className="eyebrow">STEP 05 · 同角色共鸣</span><h2>和你站在同一位置的人，看见了什么？</h2><p>以下只统计同样选择「{roles[role].label}」的参与者。</p><section className="peer-section"><header><span>行为选择</span><small>你的选择以 ✓ 标记</small></header>{behaviors[role].map((item, i) => <div className="peer-bar" key={item}><div><span>{selectedBehaviors.includes(item) ? "✓ " : ""}{item}</span><b>{stats.behaviorCounts[role][i]}</b></div><i><b style={{ width: `${stats.behaviorCounts[role][i] / behaviorMax * 100}%` }} /></i></div>)}</section><section className="peer-section"><header><span>内在情绪</span><small>可看见相似与差异</small></header><div className="peer-emotion-grid">{emotions.map((item, i) => <div className={selectedEmotions.includes(item) ? "mine" : ""} key={item}><span>{selectedEmotions.includes(item) ? "✓ " : ""}{item}</span><b>{stats.emotionCounts[role][i]}</b></div>)}</div></section><section className="peer-section"><header><span>应对姿态</span><small>共 {total} 份回应</small></header><div className="peer-stance-list">{(Object.keys(stances) as StanceKey[]).map((key) => <div className={selectedStance === key ? "mine" : ""} key={key}><i style={{ background: stances[key].color }} /><span>{selectedStance === key ? "✓ " : ""}{stances[key].label}</span><b>{stats.stanceCounts[role][key]}</b></div>)}</div></section><div className="reflection-card"><strong>带走一个觉察</strong><p>相同的角色，不一定产生相同的感受与反应。理解差异，是一致性沟通的开始。</p></div></div>;
 }
 
-function PresenterView({ screen, setScreen, roleTotal, maxEmotion, connectedParticipants, surveySession, onSurveyControl }: { screen: number; setScreen: (n: number) => void; roleTotal: number; maxEmotion: number; connectedParticipants: number | null; surveySession: SurveySession | null; onSurveyControl: (action: "start" | "close") => void }) {
+function PresenterView({ screen, setScreen, roleTotal, maxEmotion, connectedParticipants, surveySession, onSurveyControl, stats }: { screen: number; setScreen: (n: number) => void; roleTotal: number; maxEmotion: number; connectedParticipants: number | null; surveySession: SurveySession | null; onSurveyControl: (action: "start" | "close") => void; stats: LiveStats }) {
+  const { emotionCounts, stanceCounts } = stats;
   return <section className="presenter-grid expanded-presenter"><div className="stage-column">
     <div className="presenter-nav"><div><span className="eyebrow">情境模拟 01 · 产儿科高难度对话</span><h1>{screen === 1 ? "现场正在站进谁的视角？" : screen === 2 ? "行为之下，藏着什么感受？" : "我们会用哪种姿态保护自己？"}</h1></div><div className="screen-tabs">{["角色选择", "冰山统计", "应对姿态"].map((label, i) => <button className={screen === i + 1 ? "active" : ""} key={label} onClick={() => setScreen(i + 1)}>{i + 1}. {label}</button>)}</div></div>
-    {screen === 1 && <><article className="scenario-card"><div className="scenario-image"><img src="/scenario-maternity.png" alt="焦虑孕妇、伴侣与护士在产房咨询台互动" /><div className="image-caption"><span>此刻的产房咨询台</span><strong>「我们已经等很久了，医生到底什么时候来？」</strong></div></div><div className="scenario-copy"><span className="step-badge">STEP 01</span><h2>如果你在现场，<br />你想先站进谁的视角？</h2><p>选择一个角色，带着他的信息、情绪与限制重新看一次现场。</p></div></article><div className="role-results roomy">{(Object.keys(roles) as RoleKey[]).map((role) => { const pct = Math.round(roleCounts[role] / roleTotal * 100); return <div className={`result-card ${roles[role].color}`} key={role}><RoleAvatar role={role} /><div className="result-body"><div className="result-top"><strong>{roles[role].label}</strong><b>{roleCounts[role]} 人</b></div><div className="meter"><span style={{ width: `${pct}%` }} /></div><small>{pct}% 的现场参与者</small></div></div>; })}</div></>}
+    {screen === 1 && <><article className="scenario-card"><div className="scenario-image"><img src="/scenario-maternity.png" alt="焦虑孕妇、伴侣与护士在产房咨询台互动" /><div className="image-caption"><span>此刻的产房咨询台</span><strong>「我们已经等很久了，医生到底什么时候来？」</strong></div></div><div className="scenario-copy"><span className="step-badge">STEP 01</span><h2>如果你在现场，<br />你想先站进谁的视角？</h2><p>选择一个角色，带着他的信息、情绪与限制重新看一次现场。</p></div></article><div className="role-results roomy">{(Object.keys(roles) as RoleKey[]).map((role) => { const pct = Math.round(stats.roleCounts[role] / roleTotal * 100); return <div className={`result-card ${roles[role].color}`} key={role}><RoleAvatar role={role} /><div className="result-body"><div className="result-top"><strong>{roles[role].label}</strong><b>{stats.roleCounts[role]} 人</b></div><div className="meter"><span style={{ width: `${pct}%` }} /></div><small>{pct}% 的现场参与者</small></div></div>; })}</div></>}
     {screen === 2 && <div className="iceberg-dashboard"><div className="dashboard-intro"><span className="step-badge">STEP 02–03</span><h2>三个角色，三座不同的冰山</h2><p>长条越长，代表越多人从这个角色身上觉察到该情绪。</p></div><div className="role-stat-grid">{(Object.keys(roles) as RoleKey[]).map((role) => <article className={`role-stat-column ${roles[role].color}`} key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>{roles[role].need}</span></div></header><div className="top-behavior"><span>最常被看见的行为</span><strong>{behaviors[role][role === "patient" ? 3 : role === "partner" ? 0 : 1]}</strong><small>{role === "patient" ? 28 : role === "partner" ? 31 : 26} 人选择</small></div><div className="emotion-bars">{emotions.map((emotion, i) => <div key={emotion}><span>{emotion}</span><i><b style={{ width: `${emotionCounts[role][i] / maxEmotion * 100}%` }} /></i><strong>{emotionCounts[role][i]}</strong></div>)}</div></article>)}</div></div>}
     {screen === 3 && <div className="stance-dashboard"><div className="dashboard-intro"><span className="step-badge">STEP 04</span><h2>一句话，藏着一种保护自己的姿态</h2><p>每个色块代表一种萨提尔应对姿态；比较三个角色在全场选择中的分布。</p></div><div className="stance-legend">{(Object.keys(stances) as StanceKey[]).map((key) => <span key={key}><i style={{ background: stances[key].color }} />{stances[key].label}</span>)}</div><div className="stance-rows">{(Object.keys(roles) as RoleKey[]).map((role) => { const total = Object.values(stanceCounts[role]).reduce((a,b)=>a+b,0); return <article key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>共 {total} 份回应</span></div></header><div className="stacked-bar">{(Object.keys(stances) as StanceKey[]).map((key) => <i key={key} style={{ width: `${stanceCounts[role][key] / total * 100}%`, background: stances[key].color }} title={`${stances[key].label} ${stanceCounts[role][key]} 人`} />)}</div><div className="stance-numbers">{(Object.keys(stances) as StanceKey[]).map((key) => <div key={key}><span>{stances[key].label}</span><b>{stanceCounts[role][key]}</b></div>)}</div><blockquote>一致性表达：「{statements[role].congruent}」</blockquote></article>; })}</div></div>}
   </div><QrPanel screen={screen} connectedParticipants={connectedParticipants} surveySession={surveySession} onSurveyControl={onSurveyControl} /></section>;
