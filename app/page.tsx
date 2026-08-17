@@ -7,7 +7,7 @@ type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
 type ViewKey = "presenter" | "participant";
 type SurveySession = { sequenceNo: number; status: "active" | "closed"; startedAt: string; endedAt: string | null };
 type LiveResponse = { role: RoleKey; behaviors: string[]; emotions: string[]; stance: StanceKey | null; stage?: "role" | "iceberg" | "stance" | "complete" };
-type LiveStats = { roleCounts: Record<RoleKey, number>; icebergCompleted: Record<RoleKey, number>; behaviorCounts: Record<RoleKey, number[]>; emotionCounts: Record<RoleKey, number[]>; stanceCounts: Record<RoleKey, Record<StanceKey, number>> };
+type LiveStats = { roleCounts: Record<RoleKey, number>; icebergCompleted: Record<RoleKey, number>; behaviorCompleted: Record<RoleKey, number>; emotionCompleted: Record<RoleKey, number>; behaviorCounts: Record<RoleKey, number[]>; emotionCounts: Record<RoleKey, number[]>; stanceCounts: Record<RoleKey, Record<StanceKey, number>> };
 
 const roles: Record<RoleKey, { label: string; short: string; icon: string; color: string; quote: string; need: string }> = {
   patient: { label: "焦虑的孕妇", short: "孕妇", icon: "孕", color: "coral", quote: "我很痛，也不知道还要等多久。", need: "安全、被看见、可预期" },
@@ -97,7 +97,7 @@ export default function Home() {
     return () => window.clearInterval(timer);
   }, []);
 
-  const submitResponse = async (stage: "role" | "iceberg" | "complete", stance: StanceKey | null = selectedStance, roleOverride: RoleKey | null = role) => {
+  const submitResponse = async (stage: "role" | "iceberg" | "complete", stance: StanceKey | null = selectedStance, roleOverride: RoleKey | null = role, answerOverride?: { behaviors?: string[]; emotions?: string[] }) => {
     if (!roleOverride) return false;
     let participantId = window.localStorage.getItem("lpl-participant-id");
     if (!participantId) {
@@ -111,8 +111,8 @@ export default function Home() {
         body: JSON.stringify({
           participantId,
           role: roleOverride,
-          behaviors: stage === "role" ? [] : selectedBehaviors,
-          emotions: stage === "role" ? [] : selectedEmotions,
+          behaviors: stage === "role" ? [] : answerOverride?.behaviors ?? selectedBehaviors,
+          emotions: stage === "role" ? [] : answerOverride?.emotions ?? selectedEmotions,
           stance,
           dialogue: stance ? statements[roleOverride][stance] : null,
           stage,
@@ -132,6 +132,14 @@ export default function Home() {
       return false;
     }
   };
+
+  useEffect(() => {
+    if (step !== 2 || !role || (!selectedBehaviors.length && !selectedEmotions.length)) return;
+    const timer = window.setTimeout(() => {
+      void submitResponse("iceberg", null, role, { behaviors: selectedBehaviors, emotions: selectedEmotions });
+    }, 300);
+    return () => window.clearTimeout(timer);
+  }, [step, role, selectedBehaviors, selectedEmotions]);
 
   const controlSurvey = async (action: "start" | "close") => {
     const message = action === "start"
@@ -156,6 +164,8 @@ export default function Home() {
   const liveStats = useMemo(() => {
     const roleCounts = { patient: 0, partner: 0, nurse: 0 } as Record<RoleKey, number>;
     const icebergCompleted = { patient: 0, partner: 0, nurse: 0 } as Record<RoleKey, number>;
+    const behaviorCompleted = { patient: 0, partner: 0, nurse: 0 } as Record<RoleKey, number>;
+    const emotionCompleted = { patient: 0, partner: 0, nurse: 0 } as Record<RoleKey, number>;
     const behaviorCounts = { patient: behaviors.patient.map(() => 0), partner: behaviors.partner.map(() => 0), nurse: behaviors.nurse.map(() => 0) } as Record<RoleKey, number[]>;
     const emotionCounts = { patient: emotions.map(() => 0), partner: emotions.map(() => 0), nurse: emotions.map(() => 0) } as Record<RoleKey, number[]>;
     const stanceCounts = { patient: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 }, partner: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 }, nurse: { super: 0, distract: 0, blame: 0, please: 0, congruent: 0 } } as Record<RoleKey, Record<StanceKey, number>>;
@@ -163,16 +173,22 @@ export default function Home() {
       if (!roles[response.role]) continue;
       roleCounts[response.role]++;
       if (response.stage !== "role" && (response.behaviors?.length || response.emotions?.length)) icebergCompleted[response.role]++;
+      if (response.behaviors?.length) behaviorCompleted[response.role]++;
+      if (response.emotions?.length) emotionCompleted[response.role]++;
       response.behaviors?.forEach((item) => { const index = behaviors[response.role].indexOf(item); if (index >= 0) behaviorCounts[response.role][index]++; });
       response.emotions?.forEach((item) => { const index = emotions.indexOf(item); if (index >= 0) emotionCounts[response.role][index]++; });
       if (response.stance && stanceCounts[response.role][response.stance] !== undefined) stanceCounts[response.role][response.stance]++;
     }
-    return { roleCounts, icebergCompleted, behaviorCounts, emotionCounts, stanceCounts };
+    return { roleCounts, icebergCompleted, behaviorCompleted, emotionCompleted, behaviorCounts, emotionCounts, stanceCounts };
   }, [liveResponses]);
   const roleTotal = Math.max(1, Object.values(liveStats.roleCounts).reduce((a, b) => a + b, 0));
   const progress = `${Math.min(step, 5) * 20}%`;
 
   const chooseRole = (nextRole: RoleKey) => {
+    if (nextRole === role) {
+      setStep(2);
+      return;
+    }
     setRole(nextRole);
     setSelectedBehaviors([]);
     setSelectedEmotions([]);
@@ -274,7 +290,7 @@ function IcebergDashboard({ stats }: { stats: LiveStats }) {
   return <div className="iceberg-dashboard"><div className="dashboard-intro"><span className="step-badge">STEP 02–03</span><h2>三个角色，三座不同的冰山</h2><p>完整呈现五种行为，并将内在情绪依现场选择次数排序，显示前五名。</p></div><div className="role-stat-grid">{(Object.keys(roles) as RoleKey[]).map((role) => {
     const denominator = Math.max(1, stats.icebergCompleted[role]);
     const rankedEmotions = emotions.map((label, index) => ({ label, count: stats.emotionCounts[role][index] })).sort((a, b) => b.count - a.count || emotions.indexOf(a.label) - emotions.indexOf(b.label)).slice(0, 5);
-    return <article className={`role-stat-column ${roles[role].color}`} key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>{stats.roleCounts[role]} 人选择角色 · {stats.icebergCompleted[role]} 人完成冰山</span></div></header><div className="iceberg-stat-section"><b>水面之上 · 五种行为</b><div className="emotion-bars behavior-bars">{behaviors[role].map((behavior, index) => <div key={behavior}><span title={behavior}>{behavior}</span><i><b style={{ width: `${stats.behaviorCounts[role][index] / denominator * 100}%` }} /></i><strong>{stats.behaviorCounts[role][index]}</strong></div>)}</div></div><div className="iceberg-stat-section below"><b>水面之下 · 情绪前五名</b><div className="emotion-bars">{rankedEmotions.map((emotion) => <div key={emotion.label}><span>{emotion.label}</span><i><b style={{ width: `${emotion.count / denominator * 100}%` }} /></i><strong>{emotion.count}</strong></div>)}</div></div></article>;
+    return <article className={`role-stat-column ${roles[role].color}`} key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>{stats.roleCounts[role]} 人选择角色 · {stats.icebergCompleted[role]} 人开始填写冰山</span></div></header><div className="iceberg-stat-section"><b>水面之上 · 五种行为 <small>{stats.behaviorCompleted[role]}/{stats.roleCounts[role]} 人已填</small></b><div className="emotion-bars behavior-bars">{behaviors[role].map((behavior, index) => <div key={behavior}><span title={behavior}>{behavior}</span><i><b style={{ width: `${stats.behaviorCounts[role][index] / denominator * 100}%` }} /></i><strong>{stats.behaviorCounts[role][index]}</strong></div>)}</div></div><div className="iceberg-stat-section below"><b>水面之下 · 情绪前五名 <small>{stats.emotionCompleted[role]}/{stats.roleCounts[role]} 人已填</small></b><div className="emotion-bars">{rankedEmotions.map((emotion) => <div key={emotion.label}><span>{emotion.label}</span><i><b style={{ width: `${emotion.count / denominator * 100}%` }} /></i><strong>{emotion.count}</strong></div>)}</div></div></article>;
   })}</div></div>;
 }
 
@@ -282,7 +298,7 @@ function StanceDashboard({ stats }: { stats: LiveStats }) {
   return <div className="stance-dashboard"><div className="dashboard-intro"><span className="step-badge">STEP 04</span><h2>一句话，藏着一种保护自己的姿态</h2><p>点选一句话后立即计入；每个色块代表一种萨提尔应对姿态。</p></div><div className="stance-legend">{(Object.keys(stances) as StanceKey[]).map((key) => <span key={key}><i style={{ background: stances[key].color }} />{stances[key].label}</span>)}</div><div className="stance-rows">{(Object.keys(roles) as RoleKey[]).map((role) => {
     const total = Object.values(stats.stanceCounts[role]).reduce((a, b) => a + b, 0);
     const denominator = Math.max(1, total);
-    return <article key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>{stats.roleCounts[role]} 人选择角色 · {total} 人完成姿态</span></div></header><div className="stacked-bar">{(Object.keys(stances) as StanceKey[]).map((key) => <i key={key} style={{ width: `${stats.stanceCounts[role][key] / denominator * 100}%`, background: stances[key].color }} title={`${stances[key].label} ${stats.stanceCounts[role][key]} 人`} />)}</div><div className="stance-numbers">{(Object.keys(stances) as StanceKey[]).map((key) => <div key={key}><span>{stances[key].label}</span><b>{stats.stanceCounts[role][key]}</b></div>)}</div><blockquote>一致性表达：「{statements[role].congruent}」</blockquote></article>;
+    return <article key={role}><header><RoleAvatar role={role} /><div><h3>{roles[role].label}</h3><span>{stats.roleCounts[role]} 人选择角色 · {total} 人完成姿态 · {Math.max(0, stats.roleCounts[role] - total)} 人未完成</span></div></header><div className="stacked-bar">{(Object.keys(stances) as StanceKey[]).map((key) => <i key={key} style={{ width: `${stats.stanceCounts[role][key] / denominator * 100}%`, background: stances[key].color }} title={`${stances[key].label} ${stats.stanceCounts[role][key]} 人`} />)}</div><div className="stance-numbers">{(Object.keys(stances) as StanceKey[]).map((key) => <div key={key}><span>{stances[key].label}</span><b>{stats.stanceCounts[role][key]}</b></div>)}</div><blockquote>一致性表达：「{statements[role].congruent}」</blockquote></article>;
   })}</div></div>;
 }
 
