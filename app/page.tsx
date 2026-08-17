@@ -76,6 +76,16 @@ function RoleAvatar({ role }: { role: RoleKey }) {
   return <span className={`role-avatar ${roles[role].color}`}>{roles[role].icon}</span>;
 }
 
+function createParticipantId() {
+  const bytes = new Uint8Array(16);
+  if (window.crypto?.getRandomValues) window.crypto.getRandomValues(bytes);
+  else for (let i = 0; i < bytes.length; i++) bytes[i] = Math.floor(Math.random() * 256);
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const value = Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+  return `${value.slice(0, 8)}-${value.slice(8, 12)}-${value.slice(12, 16)}-${value.slice(16, 20)}-${value.slice(20)}`;
+}
+
 export default function Home() {
   const [view, setView] = useState<ViewKey>("participant");
   const [step, setStep] = useState(1);
@@ -87,6 +97,7 @@ export default function Home() {
   const [connectedParticipants, setConnectedParticipants] = useState<number | null>(null);
   const [surveySession, setSurveySession] = useState<SurveySession | null>(null);
   const [liveResponses, setLiveResponses] = useState<LiveResponse[]>([]);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   useEffect(() => {
     const refresh = async () => {
@@ -104,25 +115,39 @@ export default function Home() {
   }, []);
 
   const submitResponse = async (stage: "role" | "iceberg" | "complete", stance: StanceKey | null = selectedStance, roleOverride: RoleKey | null = role) => {
-    if (!roleOverride) return;
+    if (!roleOverride) return false;
     let participantId = window.localStorage.getItem("lpl-participant-id");
     if (!participantId) {
-      participantId = window.crypto.randomUUID();
+      participantId = createParticipantId();
       window.localStorage.setItem("lpl-participant-id", participantId);
     }
-    await fetch("/api/interaction", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        participantId,
-        role: roleOverride,
-        behaviors: stage === "role" ? [] : selectedBehaviors,
-        emotions: stage === "role" ? [] : selectedEmotions,
-        stance,
-        dialogue: stance ? statements[roleOverride][stance] : null,
-        stage,
-      }),
-    });
+    try {
+      const response = await fetch("/api/interaction", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          participantId,
+          role: roleOverride,
+          behaviors: stage === "role" ? [] : selectedBehaviors,
+          emotions: stage === "role" ? [] : selectedEmotions,
+          stance,
+          dialogue: stance ? statements[roleOverride][stance] : null,
+          stage,
+        }),
+      });
+      if (!response.ok) throw new Error("资料暂时无法送出，请稍后再试");
+      setSubmitError(null);
+      const latest = await fetch("/api/interaction", { cache: "no-store" });
+      const data = await latest.json();
+      if (latest.ok) {
+        setConnectedParticipants(data.participants ?? 0);
+        setLiveResponses(Array.isArray(data.responses) ? data.responses : []);
+      }
+      return true;
+    } catch (error) {
+      setSubmitError(error instanceof Error ? error.message : "资料暂时无法送出，请稍后再试");
+      return false;
+    }
   };
 
   const controlSurvey = async (action: "start" | "close") => {
@@ -210,6 +235,7 @@ export default function Home() {
             {step === 3 && <MobileResults onNext={() => setStep(4)} stats={liveStats} />}
             {step === 4 && role && <StanceStep role={role} selected={selectedStance} onSelect={setSelectedStance} onNext={() => { void submitResponse("complete", selectedStance); setStep(5); }} />}
             {step === 5 && role && <PeerResults role={role} selectedBehaviors={selectedBehaviors} selectedEmotions={selectedEmotions} selectedStance={selectedStance} stats={liveStats} />}
+            {submitError && <div className="submit-error" role="alert">{submitError}</div>}
             {step > 1 && <button className="phone-back" onClick={() => setStep(step - 1)}>← 上一步</button>}
           </div>
         </section>
