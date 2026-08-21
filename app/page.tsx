@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { localeLabels, translate, useDocumentLocalization, type Locale } from "./i18n";
 
 type RoleKey = "patient" | "partner" | "nurse";
 type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
@@ -70,6 +71,7 @@ function createParticipantId() {
 }
 
 export default function Home() {
+  const [locale, setLocale] = useState<Locale>("zh-CN");
   const [view, setView] = useState<ViewKey>("participant");
   const [step, setStep] = useState(1);
   const [presenterScreen, setPresenterScreen] = useState(1);
@@ -81,6 +83,17 @@ export default function Home() {
   const [surveySession, setSurveySession] = useState<SurveySession | null>(null);
   const [liveResponses, setLiveResponses] = useState<LiveResponse[]>([]);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  useDocumentLocalization(locale);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("lpl-locale") as Locale | null;
+    if (saved && saved in localeLabels) setLocale(saved);
+  }, []);
+
+  const changeLocale = (nextLocale: Locale) => {
+    setLocale(nextLocale);
+    window.localStorage.setItem("lpl-locale", nextLocale);
+  };
 
   useEffect(() => {
     const refresh = async () => {
@@ -142,11 +155,11 @@ export default function Home() {
   }, [step, role, selectedBehaviors, selectedEmotions]);
 
   const controlSurvey = async (action: "start" | "close") => {
-    const message = action === "start"
+    const message = translate(locale, action === "start"
       ? "确定重新开始？目前场次会封存，并建立一个人数归零的新场次。"
-      : "确定结束本次调查？结束后将停止接受新填答。";
+      : "确定结束本次调查？结束后将停止接受新填答。");
     if (!window.confirm(message)) return;
-    const pin = window.prompt("请输入主办人管理密码");
+    const pin = window.prompt(translate(locale, "请输入主办人管理密码"));
     if (!pin) return;
     const response = await fetch("/api/session", {
       method: "POST",
@@ -158,7 +171,7 @@ export default function Home() {
     setSurveySession(data.session ?? null);
     setConnectedParticipants(0);
     setLiveResponses([]);
-    window.alert(action === "start" ? "新场次已经开始，画面统计已归零。" : "调查已经结束，资料已完整封存。" );
+    window.alert(translate(locale, action === "start" ? "新场次已经开始，画面统计已归零。" : "调查已经结束，资料已完整封存。"));
   };
 
   const liveStats = useMemo(() => {
@@ -212,6 +225,9 @@ export default function Home() {
         <div className="view-switch" aria-label="预览画面切换">
           <button className={view === "presenter" ? "active" : ""} onClick={() => setView("presenter")}>讲者画面</button>
           <button className={view === "participant" ? "active" : ""} onClick={() => setView("participant")}>手机参与</button>
+        </div>
+        <div className="language-switch" aria-label="Language">
+          {(Object.keys(localeLabels) as Locale[]).map((key) => <button key={key} className={locale === key ? "active" : ""} onClick={() => changeLocale(key)}>{localeLabels[key]}</button>)}
         </div>
         <div className="live-pill"><i /> LIVE · 情境 01</div>
       </header>
