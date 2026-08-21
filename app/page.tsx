@@ -6,7 +6,7 @@ import { localeLabels, translate, useDocumentLocalization, type Locale } from ".
 type RoleKey = "patient" | "partner" | "nurse";
 type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
 type ViewKey = "presenter" | "participant";
-type ScenarioKey = "maternity" | "campus";
+type ScenarioKey = "maternity" | "campus" | "thoracic";
 type Scenario = {
   key: ScenarioKey; eventCode: string; number: string; switchLabel: string;
   image: string; qr: string; imageAlt: string; presenterEyebrow: string;
@@ -101,6 +101,34 @@ const scenarios: Record<ScenarioKey, Scenario> = {
       },
     },
   },
+  thoracic: {
+    key: "thoracic", eventCode: "THORACIC2026", number: "03", switchLabel: "情境 03 · 胸腔开刀的第二意见",
+    image: "/scenario-thoracic.png", qr: "/qr-thoracic.png", imageAlt: "胸腔有肿瘤的爷爷、陪伴的儿子与年轻主治医生讨论第二意见",
+    presenterEyebrow: "情境模拟 03 · 胸腔手术第二意见沟通", captionLabel: "此刻的胸腔外科诊间",
+    captionQuote: "医生，我想再听听别人的意见，才决定要不要开刀。",
+    roles: {
+      patient: { label: "胸腔有肿瘤的爷爷", short: "爷爷", icon: "爷", color: "coral", quote: "我不是不相信医生，只是开刀这件事太大了。", need: "安全感、选择权、时间、被尊重" },
+      partner: { label: "在一旁陪伴的儿子", short: "儿子", icon: "子", color: "amber", quote: "我怕爸爸错过治疗，也怕替他做错决定。", need: "清楚信息、方向、参与感、减轻内疚" },
+      nurse: { label: "年轻的主治医生", short: "主治医生", icon: "医", color: "blue", quote: "我希望他理解风险，也要尊重他寻求第二意见。", need: "信任、专业完整、共同决策、治疗时机" },
+    },
+    behaviors: {
+      patient: ["反复询问不开刀会怎么样", "看着影像沉默很久", "强调自己年纪大不想受苦", "询问能否先听第二位医生意见", "把决定推给身旁的儿子"],
+      partner: ["追问手术成功率与恢复时间", "急着劝父亲尽快接受手术", "替父亲回答医生的问题", "拿出手机记录并核对信息", "停下来询问父亲真正担心什么"],
+      nurse: ["逐项说明手术效益与风险", "用专业术语快速解释影像", "确认爷爷对信息的理解", "主动提供第二意见与转诊方式", "邀请父子分别说出最在意的事"],
+    },
+    emotions: ["害怕", "焦虑", "犹豫", "无助", "不信任", "担心后悔", "内疚", "心疼", "希望", "渴望被尊重"],
+    statements: {
+      patient: {
+        super: "请告诉我肿瘤大小、分期、手术成功率和不手术的风险。", distract: "先别说开刀了，最近天气不错，我还想回乡下走走。", blame: "你们只会叫我开刀，根本没有想过我这么大年纪受不受得了！", please: "你们觉得怎么做就怎么做，我不想让孩子为难。", congruent: "我很害怕手术，也担心错过治疗；我想听完第二意见再做决定。",
+      },
+      partner: {
+        super: "请把所有治疗方案、数据、费用和时间表列出来让我们比较。", distract: "爸，我们先去吃饭吧，这些事情回家再慢慢谈。", blame: "爸，你为什么一直拖？错过机会以后怎么办！", please: "只要爸爸安心，怎么决定我都配合，不用考虑我。", congruent: "我怕爸爸错过治疗，也怕逼他做决定；我想先听懂选择，再尊重他的意愿。",
+      },
+      nurse: {
+        super: "依据影像与指南，现阶段建议手术切除并完成病理评估。", distract: "我们先不谈手术，最近食欲和睡眠还好吗？", blame: "如果一直犹豫延误治疗，之后的风险就要自己承担。", please: "您不想开刀也没关系，我都照您的意思安排。", congruent: "我理解您害怕，也尊重您寻求第二意见；我会说明时间与风险，陪您做知情决定。",
+      },
+    },
+  },
 };
 
 const ScenarioContext = createContext<Scenario>(scenarios.maternity);
@@ -142,7 +170,8 @@ export default function Home() {
   useEffect(() => {
     const saved = window.localStorage.getItem("lpl-locale") as Locale | null;
     if (saved && saved in localeLabels) setLocale(saved);
-    if (new URLSearchParams(window.location.search).get("scenario") === "campus") setScenarioKey("campus");
+    const requested = new URLSearchParams(window.location.search).get("scenario");
+    if (requested === "campus" || requested === "thoracic") setScenarioKey(requested);
   }, []);
 
   const changeScenario = (next: ScenarioKey) => {
@@ -150,7 +179,7 @@ export default function Home() {
     setStep(1); setPresenterScreen(1); setRole(null); setSelectedBehaviors([]); setSelectedEmotions([]); setSelectedStance(null);
     setConnectedParticipants(null); setSurveySession(null); setLiveResponses([]);
     const url = new URL(window.location.href);
-    next === "campus" ? url.searchParams.set("scenario", "campus") : url.searchParams.delete("scenario");
+    next === "maternity" ? url.searchParams.delete("scenario") : url.searchParams.set("scenario", next);
     window.history.replaceState({}, "", url);
   };
 

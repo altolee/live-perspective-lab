@@ -1,6 +1,6 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
-const EVENT_CODES = new Set(["CARE2026", "UNPLANNED2026"]);
+const EVENT_CODES = new Set(["CARE2026", "UNPLANNED2026", "THORACIC2026"]);
 
 function eventCode(value: unknown) {
   return typeof value === "string" && EVENT_CODES.has(value) ? value : "CARE2026";

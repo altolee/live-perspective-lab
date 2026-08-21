@@ -125,6 +125,48 @@ const campusStatements: Array<[string, string, string]> = [
 ];
 campusStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
 
+Object.assign(zhTW, {
+  "情境 03 · 胸腔开刀的第二意见": "情境 03 · 胸腔開刀的第二意見", "情境模拟 03": "情境模擬 03", "情境模拟 03 · 胸腔手术第二意见沟通": "情境模擬 03 · 胸腔手術第二意見溝通", "此刻的胸腔外科诊间": "此刻的胸腔外科診間",
+  "医生，我想再听听别人的意见，才决定要不要开刀。": "醫師，我想再聽聽別人的意見，才決定要不要開刀。", "胸腔有肿瘤的爷爷、陪伴的儿子与年轻主治医生讨论第二意见": "胸腔有腫瘤的爺爺、陪伴的兒子與年輕主治醫師討論第二意見",
+  "胸腔有肿瘤的爷爷": "胸腔有腫瘤的爺爺", "爷爷": "爺爺", "爷": "爺", "在一旁陪伴的儿子": "在一旁陪伴的兒子", "儿子": "兒子", "年轻的主治医生": "年輕的主治醫師", "主治医生": "主治醫師", "医": "醫",
+  "我不是不相信医生，只是开刀这件事太大了。": "我不是不相信醫師，只是開刀這件事太大了。", "我怕爸爸错过治疗，也怕替他做错决定。": "我怕爸爸錯過治療，也怕替他做錯決定。", "我希望他理解风险，也要尊重他寻求第二意见。": "我希望他理解風險，也要尊重他尋求第二意見。",
+  "安全感、选择权、时间、被尊重": "安全感、選擇權、時間、被尊重", "清楚信息、方向、参与感、减轻内疚": "清楚資訊、方向、參與感、減輕內疚", "信任、专业完整、共同决策、治疗时机": "信任、專業完整、共同決策、治療時機",
+  "犹豫": "猶豫", "不信任": "不信任", "担心后悔": "擔心後悔", "心疼": "心疼", "希望": "希望", "渴望被尊重": "渴望被尊重",
+  "反复询问不开刀会怎么样": "反覆詢問不開刀會怎麼樣", "看着影像沉默很久": "看著影像沉默很久", "强调自己年纪大不想受苦": "強調自己年紀大不想受苦", "询问能否先听第二位医生意见": "詢問能否先聽第二位醫師意見", "把决定推给身旁的儿子": "把決定推給身旁的兒子",
+  "追问手术成功率与恢复时间": "追問手術成功率與恢復時間", "急着劝父亲尽快接受手术": "急著勸父親儘快接受手術", "替父亲回答医生的问题": "替父親回答醫師的問題", "拿出手机记录并核对信息": "拿出手機記錄並核對資訊", "停下来询问父亲真正担心什么": "停下來詢問父親真正擔心什麼",
+  "逐项说明手术效益与风险": "逐項說明手術效益與風險", "用专业术语快速解释影像": "用專業術語快速解釋影像", "确认爷爷对信息的理解": "確認爺爺對資訊的理解", "主动提供第二意见与转诊方式": "主動提供第二意見與轉診方式", "邀请父子分别说出最在意的事": "邀請父子分別說出最在意的事",
+});
+Object.assign(en, {
+  "情境 03 · 胸腔开刀的第二意见": "Scenario 03 · A second opinion on thoracic surgery", "情境模拟 03": "Scenario 03", "情境模拟 03 · 胸腔手术第二意见沟通": "Scenario 03 · Discussing a second opinion before thoracic surgery", "此刻的胸腔外科诊间": "At the thoracic surgery clinic",
+  "医生，我想再听听别人的意见，才决定要不要开刀。": "Doctor, I want another opinion before deciding about surgery.", "胸腔有肿瘤的爷爷、陪伴的儿子与年轻主治医生讨论第二意见": "A grandfather with a chest tumor, his son, and a young attending physician discuss a second opinion",
+  "胸腔有肿瘤的爷爷": "Grandfather with a chest tumor", "爷爷": "Grandfather", "爷": "G", "在一旁陪伴的儿子": "His accompanying son", "儿子": "Son", "年轻的主治医生": "Young attending physician", "主治医生": "Physician", "医": "Dr",
+  "我不是不相信医生，只是开刀这件事太大了。": "It’s not that I distrust the doctor; surgery is simply a major decision.", "我怕爸爸错过治疗，也怕替他做错决定。": "I’m afraid Dad will miss treatment, and afraid I’ll make the wrong decision for him.", "我希望他理解风险，也要尊重他寻求第二意见。": "I want him to understand the risks and respect his wish for a second opinion.",
+  "安全感、选择权、时间、被尊重": "Safety, autonomy, time, respect", "清楚信息、方向、参与感、减轻内疚": "Clear information, direction, involvement, less guilt", "信任、专业完整、共同决策、治疗时机": "Trust, professional integrity, shared decisions, treatment timing",
+  "犹豫": "Hesitation", "不信任": "Distrust", "担心后悔": "Fear of regret", "心疼": "Heartache", "希望": "Hope", "渴望被尊重": "Longing for respect",
+  "反复询问不开刀会怎么样": "Repeatedly asks what happens without surgery", "看着影像沉默很久": "Looks at the scan in prolonged silence", "强调自己年纪大不想受苦": "Emphasizes being old and not wanting to suffer", "询问能否先听第二位医生意见": "Asks to hear a second physician’s opinion first", "把决定推给身旁的儿子": "Leaves the decision to his son",
+  "追问手术成功率与恢复时间": "Presses for the success rate and recovery time", "急着劝父亲尽快接受手术": "Urgently persuades his father to have surgery", "替父亲回答医生的问题": "Answers the doctor’s questions for his father", "拿出手机记录并核对信息": "Records and checks information on his phone", "停下来询问父亲真正担心什么": "Pauses to ask what his father truly fears",
+  "逐项说明手术效益与风险": "Explains surgical benefits and risks one by one", "用专业术语快速解释影像": "Rapidly explains the scan in medical terms", "确认爷爷对信息的理解": "Checks the grandfather’s understanding", "主动提供第二意见与转诊方式": "Offers a second-opinion referral process", "邀请父子分别说出最在意的事": "Invites father and son to name their priorities separately",
+});
+
+const thoracicStatements: Array<[string, string, string]> = [
+  ["请告诉我肿瘤大小、分期、手术成功率和不手术的风险。", "請告訴我腫瘤大小、分期、手術成功率和不手術的風險。", "Please tell me the tumor size, stage, surgical success rate, and risks without surgery."],
+  ["先别说开刀了，最近天气不错，我还想回乡下走走。", "先別說開刀了，最近天氣不錯，我還想回鄉下走走。", "Let’s not talk about surgery. The weather is nice; I’d like to visit the countryside."],
+  ["你们只会叫我开刀，根本没有想过我这么大年纪受不受得了！", "你們只會叫我開刀，根本沒有想過我這麼大年紀受不受得了！", "You only tell me to have surgery without considering whether I can bear it at my age!"],
+  ["你们觉得怎么做就怎么做，我不想让孩子为难。", "你們覺得怎麼做就怎麼做，我不想讓孩子為難。", "Do whatever you think is best. I don’t want to burden my son."],
+  ["我很害怕手术，也担心错过治疗；我想听完第二意见再做决定。", "我很害怕手術，也擔心錯過治療；我想聽完第二意見再做決定。", "I fear surgery and missing treatment. I want a second opinion before deciding."],
+  ["请把所有治疗方案、数据、费用和时间表列出来让我们比较。", "請把所有治療方案、數據、費用和時間表列出來讓我們比較。", "Please list every treatment, outcome, cost, and timeline for comparison."],
+  ["爸，我们先去吃饭吧，这些事情回家再慢慢谈。", "爸，我們先去吃飯吧，這些事情回家再慢慢談。", "Dad, let’s eat first and talk about this at home later."],
+  ["爸，你为什么一直拖？错过机会以后怎么办！", "爸，你為什麼一直拖？錯過機會以後怎麼辦！", "Dad, why keep delaying? What if you miss the opportunity?"],
+  ["只要爸爸安心，怎么决定我都配合，不用考虑我。", "只要爸爸安心，怎麼決定我都配合，不用考慮我。", "As long as Dad feels at ease, I’ll support any decision. Don’t consider me."],
+  ["我怕爸爸错过治疗，也怕逼他做决定；我想先听懂选择，再尊重他的意愿。", "我怕爸爸錯過治療，也怕逼他做決定；我想先聽懂選擇，再尊重他的意願。", "I fear Dad missing treatment and forcing him. I want to understand the options and respect his wishes."],
+  ["依据影像与指南，现阶段建议手术切除并完成病理评估。", "依據影像與指引，現階段建議手術切除並完成病理評估。", "Based on the imaging and guidelines, surgery with pathology is recommended now."],
+  ["我们先不谈手术，最近食欲和睡眠还好吗？", "我們先不談手術，最近食慾和睡眠還好嗎？", "Let’s set surgery aside. How have your appetite and sleep been?"],
+  ["如果一直犹豫延误治疗，之后的风险就要自己承担。", "如果一直猶豫延誤治療，之後的風險就要自己承擔。", "If hesitation delays treatment, you will have to bear the later risks."],
+  ["您不想开刀也没关系，我都照您的意思安排。", "您不想開刀也沒關係，我都照您的意思安排。", "It’s fine if you don’t want surgery; I’ll arrange whatever you prefer."],
+  ["我理解您害怕，也尊重您寻求第二意见；我会说明时间与风险，陪您做知情决定。", "我理解您害怕，也尊重您尋求第二意見；我會說明時間與風險，陪您做知情決定。", "I understand your fear and respect a second opinion. I’ll explain timing and risks so you can make an informed choice."],
+];
+thoracicStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
+
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
 export function translate(locale: Locale, source: string) {
