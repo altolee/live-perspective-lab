@@ -254,6 +254,8 @@ zhTW["成功大学不分系 李孟学"] = "成功大學不分系 李孟學";
 en["成功大学不分系 李孟学"] = "NCKU Interdisciplinary Program · Meng-Hsueh Lee";
 zhTW["整合设计思考、萨提尔模式与生成式 AI 于医疗临床沟通教学之设计与实践"] = "整合設計思考、薩提爾模式與生成式 AI 於醫療臨床溝通教學之設計與實踐";
 en["整合设计思考、萨提尔模式与生成式 AI 于医疗临床沟通教学之设计与实践"] = "Design and Practice of Integrating Design Thinking, the Satir Model, and Generative AI in Clinical Healthcare Communication Education";
+zhTW["你想站在谁的视角？"] = "你想站在誰的視角？";
+en["你想站在谁的视角？"] = "Whose perspective would you like to take?";
 
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
