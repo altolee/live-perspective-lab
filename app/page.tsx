@@ -369,7 +369,7 @@ export default function Home() {
 
   return (
     <ScenarioContext.Provider value={scenario}><main className="site-shell">
-      <div className="conference-banner">整合设计思考、萨提尔模式与生成式 AI 于护理临床沟通教学之设计与实践</div>
+      <div className="conference-banner">整合设计思考、萨提尔模式与生成式 AI 于医疗临床沟通教学之设计与实践</div>
       <header className="topbar">
         <div className="brand-lockup"><span className="brand-mark">觉</span><div><strong>共感现场</strong><span>LIVE PERSPECTIVE LAB</span></div></div>
         <div className="view-switch" aria-label="预览画面切换">
