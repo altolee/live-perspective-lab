@@ -208,6 +208,47 @@ const medicationStatements: Array<[string, string, string]> = [
 ];
 medicationStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
 
+Object.assign(zhTW, {
+  "情境 05 · 病房技术操作中的情绪失控": "情境 05 · 病房技術操作中的情緒失控", "情境模拟 05": "情境模擬 05", "情境模拟 05 · 病房冲突与团队安全": "情境模擬 05 · 病房衝突與團隊安全", "此刻的病房技术操作现场": "此刻的病房技術操作現場",
+  "先暂停一下。现在的沟通已经影响团队与病人安全。": "先暫停一下。現在的溝通已經影響團隊與病人安全。", "医师、新手护理师与资深护理师在病房技术操作后处理冲突": "醫師、新手護理師與資深護理師在病房技術操作後處理衝突",
+  "情绪失控的医师": "情緒失控的醫師", "医师": "醫師", "被责骂的新手护理师": "被責罵的新手護理師", "在场的资深护理师": "在場的資深護理師",
+  "事情一直不顺，我只想赶快把技术完成。": "事情一直不順，我只想趕快把技術完成。", "我很害怕，不知道现在说什么会不会更糟。": "我很害怕，不知道現在說什麼會不會更糟。", "我要先稳住现场，也要让不适当的行为停下来。": "我要先穩住現場，也要讓不適當的行為停下來。",
+  "掌控、效率、被支持、专业胜任感": "掌控、效率、被支持、專業勝任感", "安全、尊重、清楚指令、被保护": "安全、尊重、清楚指令、被保護", "病人安全、专业界线、团队合作、公平处理": "病人安全、專業界線、團隊合作、公平處理",
+  "羞辱": "羞辱", "紧张": "緊張", "担心冲突升级": "擔心衝突升級",
+  "提高音量责骂护理师": "提高音量責罵護理師", "把非危险用品重放或丢到治疗车": "把非危險用品重放或丟到治療車", "反复催促器材与步骤": "反覆催促器材與步驟", "拒绝听护理师说明现场状况": "拒絕聽護理師說明現場狀況", "短暂停下并重新确认技术需求": "短暫停下並重新確認技術需求",
+  "僵住沉默并避免眼神接触": "僵住沉默並避免眼神接觸", "慌乱寻找器材导致动作变慢": "慌亂尋找器材導致動作變慢", "不断道歉并答应所有要求": "不斷道歉並答應所有要求", "尝试说明自己没有跟上指令": "嘗試說明自己沒有跟上指令", "主动请求资深护理师协助": "主動請求資深護理師協助",
+  "明确要求暂停不安全的互动": "明確要求暫停不安全的互動", "先确认病人与器材安全": "先確認病人與器材安全", "用简短语言重新分配任务": "用簡短語言重新分配任務", "陪新手护理师离开现场稳定情绪": "陪新手護理師離開現場穩定情緒", "记录经过并启动后续通报沟通": "記錄經過並啟動後續通報溝通",
+});
+Object.assign(en, {
+  "情境 05 · 病房技术操作中的情绪失控": "Scenario 05 · Emotional escalation during a ward procedure", "情境模拟 05": "Scenario 05", "情境模拟 05 · 病房冲突与团队安全": "Scenario 05 · Ward conflict and team safety", "此刻的病房技术操作现场": "At the bedside procedure",
+  "先暂停一下。现在的沟通已经影响团队与病人安全。": "Let us pause. This communication is affecting team and patient safety.", "医师、新手护理师与资深护理师在病房技术操作后处理冲突": "A physician, novice nurse, and senior nurse address conflict during a ward procedure",
+  "情绪失控的医师": "Physician who lost his temper", "医师": "Physician", "被责骂的新手护理师": "Novice nurse being scolded", "在场的资深护理师": "Senior nurse present",
+  "事情一直不顺，我只想赶快把技术完成。": "Nothing is going smoothly. I just want to finish the procedure.", "我很害怕，不知道现在说什么会不会更糟。": "I am scared and do not know whether speaking will make it worse.", "我要先稳住现场，也要让不适当的行为停下来。": "I need to stabilize the scene and stop the inappropriate behavior.",
+  "掌控、效率、被支持、专业胜任感": "Control, efficiency, support, professional competence", "安全、尊重、清楚指令、被保护": "Safety, respect, clear instructions, protection", "病人安全、专业界线、团队合作、公平处理": "Patient safety, professional boundaries, teamwork, fair handling",
+  "羞辱": "Humiliation", "紧张": "Tension", "担心冲突升级": "Fear of escalation",
+  "提高音量责骂护理师": "Raises his voice and scolds the nurse", "把非危险用品重放或丢到治疗车": "Drops or throws safe supplies onto the cart", "反复催促器材与步骤": "Repeatedly rushes equipment and steps", "拒绝听护理师说明现场状况": "Refuses to hear the nurse’s explanation", "短暂停下并重新确认技术需求": "Pauses and reconfirms procedure needs",
+  "僵住沉默并避免眼神接触": "Freezes, stays silent, and avoids eye contact", "慌乱寻找器材导致动作变慢": "Searches frantically and slows down", "不断道歉并答应所有要求": "Keeps apologizing and agrees to everything", "尝试说明自己没有跟上指令": "Tries to explain she could not follow the instructions", "主动请求资深护理师协助": "Asks the senior nurse for help",
+  "明确要求暂停不安全的互动": "Clearly calls for a pause to the unsafe interaction", "先确认病人与器材安全": "First checks patient and equipment safety", "用简短语言重新分配任务": "Reassigns tasks using concise language", "陪新手护理师离开现场稳定情绪": "Helps the novice nurse step away and settle", "记录经过并启动后续通报沟通": "Documents events and initiates follow-up reporting",
+});
+const wardConflictStatements: Array<[string, string, string]> = [
+  ["请依照技术步骤准备所有器材，不要再影响操作进度。", "請依照技術步驟準備所有器材，不要再影響操作進度。", "Prepare all equipment according to the procedure and do not delay progress."],
+  ["算了，先不做了，换个时间再处理这位病人。", "算了，先不做了，換個時間再處理這位病人。", "Forget it. We will stop and handle this patient another time."],
+  ["这么简单的事情都做不好，你到底有没有受过训练！", "這麼簡單的事情都做不好，你到底有沒有受過訓練！", "You cannot even do something this simple. Were you trained at all?"],
+  ["好，都照你们的方式，我不再说任何意见。", "好，都照你們的方式，我不再說任何意見。", "Fine, do it your way. I will not say anything else."],
+  ["我现在很挫折，也担心操作延误；我需要暂停一下，再用清楚且尊重的方式确认分工。", "我現在很挫折，也擔心操作延誤；我需要暫停一下，再用清楚且尊重的方式確認分工。", "I am frustrated and worried about delay. I need a pause, then clear and respectful task confirmation."],
+  ["目前器材准备进度与操作流程如下，我会依序完成指令。", "目前器材準備進度與操作流程如下，我會依序完成指令。", "Here is the equipment status and process. I will complete each instruction in order."],
+  ["我先去拿其他东西，这里请学姊帮忙一下。", "我先去拿其他東西，這裡請學姊幫忙一下。", "I will get other supplies. Could the senior nurse help here?"],
+  ["你自己没有说清楚，为什么全部怪我！", "你自己沒有說清楚，為什麼全部怪我！", "You did not explain clearly. Why blame everything on me?"],
+  ["对不起，都是我的错，你怎么说我都会照做。", "對不起，都是我的錯，你怎麼說我都會照做。", "I am sorry. It is all my fault, and I will do whatever you say."],
+  ["我现在很紧张，也没有跟上指令；请清楚告诉我优先步骤，并停止用责骂的方式沟通。", "我現在很緊張，也沒有跟上指令；請清楚告訴我優先步驟，並停止用責罵的方式溝通。", "I am tense and missed the instructions. Please clarify priorities and stop communicating through scolding."],
+  ["依据团队沟通规范，应立即暂停操作、确认安全并重新分配任务。", "依據團隊溝通規範，應立即暫停操作、確認安全並重新分配任務。", "Team communication standards require pausing, checking safety, and reallocating tasks."],
+  ["大家都累了，先把事情做完，刚才的情况以后再说。", "大家都累了，先把事情做完，剛才的情況以後再說。", "Everyone is tired. Finish first and discuss what happened later."],
+  ["你身为医师却这样乱丢东西，根本没有资格责怪别人！", "你身為醫師卻這樣亂丟東西，根本沒有資格責怪別人！", "As a physician throwing things, you have no right to blame others!"],
+  ["医生您别生气，我来处理全部事情，新人先不要讲话。", "醫師您別生氣，我來處理全部事情，新人先不要講話。", "Doctor, please do not be angry. I will handle everything; the novice nurse will stay quiet."],
+  ["我看见现场压力很高；我们先确保病人安全，也请停止责骂和丢物，再重新确认分工。", "我看見現場壓力很高；我們先確保病人安全，也請停止責罵和丟物，再重新確認分工。", "The pressure is high. Let us ensure safety, stop scolding and throwing items, then confirm roles."],
+];
+wardConflictStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
+
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
 export function translate(locale: Locale, source: string) {

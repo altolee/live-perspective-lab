@@ -6,7 +6,7 @@ import { localeLabels, translate, useDocumentLocalization, type Locale } from ".
 type RoleKey = "patient" | "partner" | "nurse";
 type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
 type ViewKey = "presenter" | "participant";
-type ScenarioKey = "maternity" | "campus" | "thoracic" | "medication";
+type ScenarioKey = "maternity" | "campus" | "thoracic" | "medication" | "wardconflict";
 type Scenario = {
   key: ScenarioKey; eventCode: string; number: string; switchLabel: string;
   image: string; qr: string; imageAlt: string; presenterEyebrow: string;
@@ -157,6 +157,34 @@ const scenarios: Record<ScenarioKey, Scenario> = {
       },
     },
   },
+  wardconflict: {
+    key: "wardconflict", eventCode: "WARDCONFLICT2026", number: "05", switchLabel: "情境 05 · 病房技术操作中的情绪失控",
+    image: "/scenario-wardconflict.png", qr: "/qr-wardconflict.png", imageAlt: "医师、新手护理师与资深护理师在病房技术操作后处理冲突",
+    presenterEyebrow: "情境模拟 05 · 病房冲突与团队安全", captionLabel: "此刻的病房技术操作现场",
+    captionQuote: "先暂停一下。现在的沟通已经影响团队与病人安全。",
+    roles: {
+      patient: { label: "情绪失控的医师", short: "医师", icon: "医", color: "coral", quote: "事情一直不顺，我只想赶快把技术完成。", need: "掌控、效率、被支持、专业胜任感" },
+      partner: { label: "被责骂的新手护理师", short: "新手护理师", icon: "新", color: "amber", quote: "我很害怕，不知道现在说什么会不会更糟。", need: "安全、尊重、清楚指令、被保护" },
+      nurse: { label: "在场的资深护理师", short: "资深护理师", icon: "资", color: "blue", quote: "我要先稳住现场，也要让不适当的行为停下来。", need: "病人安全、专业界线、团队合作、公平处理" },
+    },
+    behaviors: {
+      patient: ["提高音量责骂护理师", "把非危险用品重放或丢到治疗车", "反复催促器材与步骤", "拒绝听护理师说明现场状况", "短暂停下并重新确认技术需求"],
+      partner: ["僵住沉默并避免眼神接触", "慌乱寻找器材导致动作变慢", "不断道歉并答应所有要求", "尝试说明自己没有跟上指令", "主动请求资深护理师协助"],
+      nurse: ["明确要求暂停不安全的互动", "先确认病人与器材安全", "用简短语言重新分配任务", "陪新手护理师离开现场稳定情绪", "记录经过并启动后续通报沟通"],
+    },
+    emotions: ["愤怒", "挫折", "焦虑", "害怕", "羞辱", "委屈", "无助", "紧张", "担心冲突升级", "渴望被尊重"],
+    statements: {
+      patient: {
+        super: "请依照技术步骤准备所有器材，不要再影响操作进度。", distract: "算了，先不做了，换个时间再处理这位病人。", blame: "这么简单的事情都做不好，你到底有没有受过训练！", please: "好，都照你们的方式，我不再说任何意见。", congruent: "我现在很挫折，也担心操作延误；我需要暂停一下，再用清楚且尊重的方式确认分工。",
+      },
+      partner: {
+        super: "目前器材准备进度与操作流程如下，我会依序完成指令。", distract: "我先去拿其他东西，这里请学姊帮忙一下。", blame: "你自己没有说清楚，为什么全部怪我！", please: "对不起，都是我的错，你怎么说我都会照做。", congruent: "我现在很紧张，也没有跟上指令；请清楚告诉我优先步骤，并停止用责骂的方式沟通。",
+      },
+      nurse: {
+        super: "依据团队沟通规范，应立即暂停操作、确认安全并重新分配任务。", distract: "大家都累了，先把事情做完，刚才的情况以后再说。", blame: "你身为医师却这样乱丢东西，根本没有资格责怪别人！", please: "医生您别生气，我来处理全部事情，新人先不要讲话。", congruent: "我看见现场压力很高；我们先确保病人安全，也请停止责骂和丢物，再重新确认分工。",
+      },
+    },
+  },
 };
 
 const ScenarioContext = createContext<Scenario>(scenarios.maternity);
@@ -199,7 +227,7 @@ export default function Home() {
     const saved = window.localStorage.getItem("lpl-locale") as Locale | null;
     if (saved && saved in localeLabels) setLocale(saved);
     const requested = new URLSearchParams(window.location.search).get("scenario");
-    if (requested === "campus" || requested === "thoracic" || requested === "medication") setScenarioKey(requested);
+    if (requested === "campus" || requested === "thoracic" || requested === "medication" || requested === "wardconflict") setScenarioKey(requested);
   }, []);
 
   const changeScenario = (next: ScenarioKey) => {
