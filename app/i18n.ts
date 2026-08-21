@@ -248,6 +248,10 @@ const wardConflictStatements: Array<[string, string, string]> = [
   ["我看见现场压力很高；我们先确保病人安全，也请停止责骂和丢物，再重新确认分工。", "我看見現場壓力很高；我們先確保病人安全，也請停止責罵和丟物，再重新確認分工。", "The pressure is high. Let us ensure safety, stop scolding and throwing items, then confirm roles."],
 ];
 wardConflictStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
+zhTW["整合设计思考、萨提尔模式与生成式 AI 于护理临床沟通教学之设计与实践"] = "整合設計思考、薩提爾模式與生成式 AI 於護理臨床溝通教學之設計與實踐";
+en["整合设计思考、萨提尔模式与生成式 AI 于护理临床沟通教学之设计与实践"] = "Design and Practice of Integrating Design Thinking, the Satir Model, and Generative AI in Clinical Nursing Communication Education";
+zhTW["成功大学不分系 李孟学"] = "成功大學不分系 李孟學";
+en["成功大学不分系 李孟学"] = "NCKU Interdisciplinary Program · Meng-Hsueh Lee";
 
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
