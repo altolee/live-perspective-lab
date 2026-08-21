@@ -6,7 +6,7 @@ import { localeLabels, translate, useDocumentLocalization, type Locale } from ".
 type RoleKey = "patient" | "partner" | "nurse";
 type StanceKey = "super" | "distract" | "blame" | "please" | "congruent";
 type ViewKey = "presenter" | "participant";
-type ScenarioKey = "maternity" | "campus" | "thoracic";
+type ScenarioKey = "maternity" | "campus" | "thoracic" | "medication";
 type Scenario = {
   key: ScenarioKey; eventCode: string; number: string; switchLabel: string;
   image: string; qr: string; imageAlt: string; presenterEyebrow: string;
@@ -129,6 +129,34 @@ const scenarios: Record<ScenarioKey, Scenario> = {
       },
     },
   },
+  medication: {
+    key: "medication", eventCode: "MEDERROR2026", number: "04", switchLabel: "情境 04 · 新手护理师给错药",
+    image: "/scenario-medication.png", qr: "/qr-medication.png", imageAlt: "新手护理师、资深护理师与护理长在护理站讨论给错药事件",
+    presenterEyebrow: "情境模拟 04 · 给药错误与病人安全通报", captionLabel: "此刻的护理站",
+    captionQuote: "我发现给药记录不一致，已经先确认病人状况，我们需要马上回报。",
+    roles: {
+      patient: { label: "给错药的新手护理师", short: "新手护理师", icon: "新", color: "coral", quote: "我真的不是故意的，我怕大家以后都不信任我。", need: "安全、被倾听、修复机会、清楚指引" },
+      partner: { label: "发现错误的资深护理师", short: "资深护理师", icon: "资", color: "amber", quote: "我必须先保护病人，也不想让学妹一个人扛下所有责任。", need: "病人安全、事实完整、团队支持、专业责任" },
+      nurse: { label: "接获回报的护理长", short: "护理长", icon: "长", color: "blue", quote: "先稳定病人、厘清事实，再一起找出系统哪里需要改变。", need: "即时处置、透明通报、公平学习、系统改善" },
+    },
+    behaviors: {
+      patient: ["反复确认给药记录与药袋", "声音发抖并不断道歉", "急着解释当时工作量很大", "担心被处分而不敢完整说明", "主动询问病人目前状况与补救方式"],
+      partner: ["立即确认病人生命征象与症状", "核对医嘱、药物与给药时间", "暂停新手护理师继续给药", "完整记录发现经过并回报护理长", "陪新手护理师整理事实与时间线"],
+      nurse: ["先指示完成病人安全评估", "通知医生并启动异常事件通报", "分别询问两位护理师事件经过", "检视排班、交班与药物流程", "安排后续说明、支持与团队复盘"],
+    },
+    emotions: ["震惊", "害怕", "自责", "羞愧", "焦虑", "委屈", "生气", "担心被责罚", "心疼病人", "渴望被理解"],
+    statements: {
+      patient: {
+        super: "我会依照异常事件流程完成记录，并逐项说明给药时间与剂量。", distract: "我先去处理其他病人的事情，这件事晚一点再说可以吗？", blame: "今天这么忙又没人帮我，出错怎么能全部怪我！", please: "都是我的错，怎么处分我都可以，请不要怪其他人。", congruent: "我很害怕也很自责；我愿意完整说明，并先一起确认病人安全与补救方式。",
+      },
+      partner: {
+        super: "依据给药安全规范，现在应先评估病人、通知医生并完成事件通报。", distract: "我们先把今天的工作做完，等下班再处理这份记录。", blame: "我已经提醒过很多次，你怎么还会犯这种错误！", please: "没关系，我先帮你把后面的事情处理掉，不用太担心。", congruent: "我很担心病人，也知道你现在害怕；我们先确保安全，再一起把事实说清楚。",
+      },
+      nurse: {
+        super: "请依标准流程完成评估、医师通知、纪录与异常事件系统通报。", distract: "最近大家都很辛苦，我们先不要把事情弄得太严重。", blame: "给药是基本职责，发生这种错误你要怎么负责？", please: "只要病人没事就好，这次我先帮你们处理，不用正式通报。", congruent: "病人安全是第一步；我会公平厘清个人与系统因素，让事件成为改善的依据。",
+      },
+    },
+  },
 };
 
 const ScenarioContext = createContext<Scenario>(scenarios.maternity);
@@ -171,7 +199,7 @@ export default function Home() {
     const saved = window.localStorage.getItem("lpl-locale") as Locale | null;
     if (saved && saved in localeLabels) setLocale(saved);
     const requested = new URLSearchParams(window.location.search).get("scenario");
-    if (requested === "campus" || requested === "thoracic") setScenarioKey(requested);
+    if (requested === "campus" || requested === "thoracic" || requested === "medication") setScenarioKey(requested);
   }, []);
 
   const changeScenario = (next: ScenarioKey) => {

@@ -167,6 +167,47 @@ const thoracicStatements: Array<[string, string, string]> = [
 ];
 thoracicStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
 
+Object.assign(zhTW, {
+  "情境 04 · 新手护理师给错药": "情境 04 · 新手護理師給錯藥", "情境模拟 04": "情境模擬 04", "情境模拟 04 · 给药错误与病人安全通报": "情境模擬 04 · 給藥錯誤與病人安全通報", "此刻的护理站": "此刻的護理站",
+  "我发现给药记录不一致，已经先确认病人状况，我们需要马上回报。": "我發現給藥紀錄不一致，已經先確認病人狀況，我們需要馬上回報。", "新手护理师、资深护理师与护理长在护理站讨论给错药事件": "新手護理師、資深護理師與護理長在護理站討論給錯藥事件",
+  "给错药的新手护理师": "給錯藥的新手護理師", "新手护理师": "新手護理師", "发现错误的资深护理师": "發現錯誤的資深護理師", "资深护理师": "資深護理師", "资": "資", "接获回报的护理长": "接獲回報的護理長", "护理长": "護理長", "长": "長",
+  "我真的不是故意的，我怕大家以后都不信任我。": "我真的不是故意的，我怕大家以後都不信任我。", "我必须先保护病人，也不想让学妹一个人扛下所有责任。": "我必須先保護病人，也不想讓學妹一個人扛下所有責任。", "先稳定病人、厘清事实，再一起找出系统哪里需要改变。": "先穩定病人、釐清事實，再一起找出系統哪裡需要改變。",
+  "安全、被倾听、修复机会、清楚指引": "安全、被傾聽、修復機會、清楚指引", "病人安全、事实完整、团队支持、专业责任": "病人安全、事實完整、團隊支持、專業責任", "即时处置、透明通报、公平学习、系统改善": "即時處置、透明通報、公平學習、系統改善",
+  "自责": "自責", "羞愧": "羞愧", "生气": "生氣", "担心被责罚": "擔心被責罰", "心疼病人": "心疼病人",
+  "反复确认给药记录与药袋": "反覆確認給藥紀錄與藥袋", "声音发抖并不断道歉": "聲音發抖並不斷道歉", "急着解释当时工作量很大": "急著解釋當時工作量很大", "担心被处分而不敢完整说明": "擔心被處分而不敢完整說明", "主动询问病人目前状况与补救方式": "主動詢問病人目前狀況與補救方式",
+  "立即确认病人生命征象与症状": "立即確認病人生命徵象與症狀", "核对医嘱、药物与给药时间": "核對醫囑、藥物與給藥時間", "暂停新手护理师继续给药": "暫停新手護理師繼續給藥", "完整记录发现经过并回报护理长": "完整記錄發現經過並回報護理長", "陪新手护理师整理事实与时间线": "陪新手護理師整理事實與時間線",
+  "先指示完成病人安全评估": "先指示完成病人安全評估", "通知医生并启动异常事件通报": "通知醫師並啟動異常事件通報", "分别询问两位护理师事件经过": "分別詢問兩位護理師事件經過", "检视排班、交班与药物流程": "檢視排班、交班與藥物流程", "安排后续说明、支持与团队复盘": "安排後續說明、支持與團隊復盤",
+});
+Object.assign(en, {
+  "情境 04 · 新手护理师给错药": "Scenario 04 · A novice nurse gives the wrong medication", "情境模拟 04": "Scenario 04", "情境模拟 04 · 给药错误与病人安全通报": "Scenario 04 · Medication error and patient-safety reporting", "此刻的护理站": "At the nursing station",
+  "我发现给药记录不一致，已经先确认病人状况，我们需要马上回报。": "I found a discrepancy in the medication record. I checked the patient, and we need to report it now.", "新手护理师、资深护理师与护理长在护理站讨论给错药事件": "A novice nurse, senior nurse, and nurse manager discuss a medication error",
+  "给错药的新手护理师": "Novice nurse who gave the wrong medication", "新手护理师": "Novice nurse", "发现错误的资深护理师": "Senior nurse who found the error", "资深护理师": "Senior nurse", "资": "Sr", "接获回报的护理长": "Nurse manager receiving the report", "护理长": "Nurse manager", "长": "NM",
+  "我真的不是故意的，我怕大家以后都不信任我。": "I truly didn’t mean to do it. I’m afraid no one will trust me again.", "我必须先保护病人，也不想让学妹一个人扛下所有责任。": "I must protect the patient, and I don’t want the novice nurse to carry everything alone.", "先稳定病人、厘清事实，再一起找出系统哪里需要改变。": "Stabilize the patient, clarify facts, then identify what the system must change.",
+  "安全、被倾听、修复机会、清楚指引": "Safety, being heard, a chance to repair, clear guidance", "病人安全、事实完整、团队支持、专业责任": "Patient safety, complete facts, team support, professional responsibility", "即时处置、透明通报、公平学习、系统改善": "Immediate action, transparent reporting, fair learning, system improvement",
+  "自责": "Self-blame", "羞愧": "Shame", "生气": "Anger", "担心被责罚": "Fear of punishment", "心疼病人": "Concern for the patient",
+  "反复确认给药记录与药袋": "Repeatedly checks the medication record and package", "声音发抖并不断道歉": "Speaks shakily and keeps apologizing", "急着解释当时工作量很大": "Rushes to explain the heavy workload", "担心被处分而不敢完整说明": "Withholds details for fear of discipline", "主动询问病人目前状况与补救方式": "Asks about the patient and corrective actions",
+  "立即确认病人生命征象与症状": "Immediately checks vital signs and symptoms", "核对医嘱、药物与给药时间": "Checks the order, medication, and administration time", "暂停新手护理师继续给药": "Pauses further medication administration", "完整记录发现经过并回报护理长": "Documents the discovery and reports to the manager", "陪新手护理师整理事实与时间线": "Helps the novice nurse organize facts and timeline",
+  "先指示完成病人安全评估": "First directs a patient-safety assessment", "通知医生并启动异常事件通报": "Notifies the physician and starts incident reporting", "分别询问两位护理师事件经过": "Interviews both nurses separately", "检视排班、交班与药物流程": "Reviews staffing, handoff, and medication workflow", "安排后续说明、支持与团队复盘": "Arranges disclosure, support, and team review",
+});
+const medicationStatements: Array<[string, string, string]> = [
+  ["我会依照异常事件流程完成记录，并逐项说明给药时间与剂量。", "我會依照異常事件流程完成紀錄，並逐項說明給藥時間與劑量。", "I will complete the incident record and detail the administration time and dose."],
+  ["我先去处理其他病人的事情，这件事晚一点再说可以吗？", "我先去處理其他病人的事情，這件事晚一點再說可以嗎？", "Can I handle my other patients first and talk about this later?"],
+  ["今天这么忙又没人帮我，出错怎么能全部怪我！", "今天這麼忙又沒人幫我，出錯怎麼能全部怪我！", "It was so busy and no one helped. How can the error be entirely my fault?"],
+  ["都是我的错，怎么处分我都可以，请不要怪其他人。", "都是我的錯，怎麼處分我都可以，請不要怪其他人。", "It is all my fault. Punish me however you want, but do not blame others."],
+  ["我很害怕也很自责；我愿意完整说明，并先一起确认病人安全与补救方式。", "我很害怕也很自責；我願意完整說明，並先一起確認病人安全與補救方式。", "I am scared and blame myself. I will explain fully and first ensure patient safety and corrective action."],
+  ["依据给药安全规范，现在应先评估病人、通知医生并完成事件通报。", "依據給藥安全規範，現在應先評估病人、通知醫師並完成事件通報。", "Under medication-safety standards, assess the patient, notify the physician, and report the incident."],
+  ["我们先把今天的工作做完，等下班再处理这份记录。", "我們先把今天的工作做完，等下班再處理這份紀錄。", "Let us finish today’s work and handle the record after the shift."],
+  ["我已经提醒过很多次，你怎么还会犯这种错误！", "我已經提醒過很多次，你怎麼還會犯這種錯誤！", "I have reminded you many times. How could you still make this error?"],
+  ["没关系，我先帮你把后面的事情处理掉，不用太担心。", "沒關係，我先幫你把後面的事情處理掉，不用太擔心。", "It is okay. I will handle what follows, so do not worry too much."],
+  ["我很担心病人，也知道你现在害怕；我们先确保安全，再一起把事实说清楚。", "我很擔心病人，也知道你現在害怕；我們先確保安全，再一起把事實說清楚。", "I worry about the patient and know you are afraid. Let us ensure safety, then clarify the facts together."],
+  ["请依标准流程完成评估、医师通知、纪录与异常事件系统通报。", "請依標準流程完成評估、醫師通知、紀錄與異常事件系統通報。", "Complete assessment, physician notification, documentation, and incident-system reporting."],
+  ["最近大家都很辛苦，我们先不要把事情弄得太严重。", "最近大家都很辛苦，我們先不要把事情弄得太嚴重。", "Everyone has been working hard. Let us not make this too serious."],
+  ["给药是基本职责，发生这种错误你要怎么负责？", "給藥是基本職責，發生這種錯誤你要怎麼負責？", "Medication administration is fundamental. How will you take responsibility for this error?"],
+  ["只要病人没事就好，这次我先帮你们处理，不用正式通报。", "只要病人沒事就好，這次我先幫你們處理，不用正式通報。", "If the patient is fine, I will handle it this time without a formal report."],
+  ["病人安全是第一步；我会公平厘清个人与系统因素，让事件成为改善的依据。", "病人安全是第一步；我會公平釐清個人與系統因素，讓事件成為改善的依據。", "Patient safety comes first. I will fairly examine personal and system factors so the incident guides improvement."],
+];
+medicationStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
+
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
 export function translate(locale: Locale, source: string) {
