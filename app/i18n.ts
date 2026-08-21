@@ -82,6 +82,49 @@ const en: Record<string, string> = {
   "目前生命征象稳定，请依分诊规则继续等候。": "Vital signs are currently stable. Please continue waiting according to triage protocol.", "我们先看看今天宝宝有没有特别活泼，好吗？": "Let’s first see whether the baby has been especially active today, okay?", "你们一直打断，我根本没办法帮忙。": "You keep interrupting me, so I can’t help at all.", "真的很抱歉，我马上想办法，不会让你们再等。": "I’m truly sorry. I’ll find a solution immediately so you won’t have to wait.", "我看见你们很着急；我会先确认安全，也会说清楚目前能做的事。": "I can see that you’re anxious. I’ll first confirm safety and clearly explain what we can do now.",
 };
 
+Object.assign(zhTW, {
+  "情境切换": "情境切換", "情境 01 · 焦虑孕妇与急躁伴侣": "情境 01 · 焦慮孕婦與急躁伴侶", "情境 02 · 女大学生非预期怀孕": "情境 02 · 女大學生非預期懷孕", "情境模拟 02": "情境模擬 02",
+  "情境模拟 02 · 校园非预期怀孕支持对话": "情境模擬 02 · 校園非預期懷孕支持對話", "此刻的校园健康中心": "此刻的校園健康中心", "我不知道该怎么办，也不敢让别人知道。": "我不知道該怎麼辦，也不敢讓別人知道。", "女大学生、伴侣与校园护理师在健康中心对话": "女大學生、伴侶與校園護理師在健康中心對話",
+  "迷惘的女大学生": "迷惘的女大學生", "女大学生": "女大學生", "不知所措的伴侣": "不知所措的伴侶", "校园护理师": "校園護理師", "护理师": "護理師", "学": "學",
+  "我完全没准备好，也不知道该告诉谁。": "我完全沒準備好，也不知道該告訴誰。", "我很担心她，却不知道怎样做才是对的。": "我很擔心她，卻不知道怎樣做才是對的。", "我要先确认她的安全，也要尊重她自己的决定。": "我要先確認她的安全，也要尊重她自己的決定。",
+  "安全、选择权、被理解、不被评判": "安全、選擇權、被理解、不被評判", "信息、参与感、方向、关系稳定": "資訊、參與感、方向、關係穩定", "安全评估、专业边界、支持网络、知情选择": "安全評估、專業界線、支持網絡、知情選擇",
+  "震惊": "震驚", "羞耻": "羞恥", "矛盾": "矛盾", "渴望被支持": "渴望被支持",
+  "反复确认验孕结果是否准确": "反覆確認驗孕結果是否準確", "低头沉默，紧握手机": "低頭沉默，緊握手機", "急着询问能不能不让家人知道": "急著詢問能不能不讓家人知道", "在不同选择之间反复改变想法": "在不同選擇之間反覆改變想法", "流泪并说自己把一切都搞砸了": "流淚並說自己把一切都搞砸了",
+  "连续追问接下来应该怎么办": "連續追問接下來應該怎麼辦", "急着替女学生做出决定": "急著替女學生做出決定", "沉默回避与女学生对视": "沉默迴避與女學生對視", "反复查看网络上的怀孕信息": "反覆查看網路上的懷孕資訊", "询问自己可以提供哪些支持": "詢問自己可以提供哪些支持",
+  "先确认身体状况与紧急风险": "先確認身體狀況與緊急風險", "说明保密原则与可用资源": "說明保密原則與可用資源", "直接列出流程但较少回应情绪": "直接列出流程但較少回應情緒", "邀请女学生说出最担心的事": "邀請女學生說出最擔心的事", "确认是否存在胁迫或安全疑虑": "確認是否存在脅迫或安全疑慮",
+});
+
+Object.assign(en, {
+  "情境切换": "Scenario switcher", "情境 01 · 焦虑孕妇与急躁伴侣": "Scenario 01 · Anxious patient and agitated partner", "情境 02 · 女大学生非预期怀孕": "Scenario 02 · Unplanned pregnancy", "情境模拟 02": "Scenario 02",
+  "情境模拟 02 · 校园非预期怀孕支持对话": "Scenario 02 · Supporting an unplanned pregnancy", "此刻的校园健康中心": "At the campus health center", "我不知道该怎么办，也不敢让别人知道。": "I don’t know what to do, and I’m afraid to tell anyone.", "女大学生、伴侣与校园护理师在健康中心对话": "A student, her partner, and a campus nurse talking at the health center",
+  "迷惘的女大学生": "Uncertain university student", "女大学生": "Student", "不知所措的伴侣": "Overwhelmed partner", "校园护理师": "Campus nurse", "护理师": "Nurse", "学": "S",
+  "我完全没准备好，也不知道该告诉谁。": "I wasn’t prepared for this, and I don’t know whom to tell.", "我很担心她，却不知道怎样做才是对的。": "I’m worried about her, but I don’t know what the right thing is.", "我要先确认她的安全，也要尊重她自己的决定。": "I need to check her safety and respect her own decision.",
+  "安全、选择权、被理解、不被评判": "Safety, autonomy, understanding, no judgment", "信息、参与感、方向、关系稳定": "Information, involvement, direction, relationship stability", "安全评估、专业边界、支持网络、知情选择": "Safety assessment, professional boundaries, support network, informed choice",
+  "震惊": "Shock", "羞耻": "Shame", "矛盾": "Conflict", "渴望被支持": "Longing for support",
+  "反复确认验孕结果是否准确": "Repeatedly checks whether the pregnancy result is accurate", "低头沉默，紧握手机": "Looks down silently and grips the phone", "急着询问能不能不让家人知道": "Urgently asks whether family can be kept uninformed", "在不同选择之间反复改变想法": "Keeps changing her mind between options", "流泪并说自己把一切都搞砸了": "Cries and says she has ruined everything",
+  "连续追问接下来应该怎么办": "Repeatedly asks what they should do next", "急着替女学生做出决定": "Rushes to decide for the student", "沉默回避与女学生对视": "Stays silent and avoids eye contact", "反复查看网络上的怀孕信息": "Repeatedly searches online for pregnancy information", "询问自己可以提供哪些支持": "Asks what support he can provide",
+  "先确认身体状况与紧急风险": "First checks physical condition and urgent risks", "说明保密原则与可用资源": "Explains confidentiality and available resources", "直接列出流程但较少回应情绪": "Lists procedures with little emotional response", "邀请女学生说出最担心的事": "Invites the student to share her greatest concern", "确认是否存在胁迫或安全疑虑": "Checks for coercion or safety concerns",
+});
+
+const campusStatements: Array<[string, string, string]> = [
+  ["我想先把所有选项、风险和时间限制都弄清楚，再决定下一步。", "我想先把所有選項、風險和時間限制都弄清楚，再決定下一步。", "I want to understand every option, risk, and time limit before deciding."],
+  ["我们先别谈这个了，我等一下还有课，快迟到了。", "我們先別談這個了，我等一下還有課，快遲到了。", "Let’s not talk about this now. I have class and I’m almost late."],
+  ["都是你害的！为什么现在要我一个人面对？", "都是你害的！為什麼現在要我一個人面對？", "This is all your fault! Why do I have to face it alone?"],
+  ["你们觉得怎么做比较好，我都可以配合。", "你們覺得怎麼做比較好，我都可以配合。", "Whatever you think is best, I’ll go along with it."],
+  ["我很害怕也很混乱；我需要知道有哪些选择，并给我一点时间决定。", "我很害怕也很混亂；我需要知道有哪些選擇，並給我一點時間決定。", "I’m scared and confused. I need to know my options and have time to decide."],
+  ["请把检查、法律规定、费用和后续流程一次说明清楚。", "請把檢查、法律規定、費用和後續流程一次說明清楚。", "Please explain the tests, legal requirements, costs, and follow-up process."],
+  ["要不我们先去吃点东西，晚一点再处理这件事。", "要不我們先去吃點東西，晚一點再處理這件事。", "Why don’t we get something to eat and deal with this later?"],
+  ["你为什么没有早点发现？现在事情全乱了！", "你為什麼沒有早點發現？現在事情全亂了！", "Why didn’t you notice sooner? Everything is a mess now!"],
+  ["只要她不要生气，我什么都答应，我都可以。", "只要她不要生氣，我什麼都答應，我都可以。", "As long as she isn’t angry, I’ll agree to anything."],
+  ["我也很害怕，不知道怎么帮她；我想先听她的需要，再一起了解选择。", "我也很害怕，不知道怎麼幫她；我想先聽她的需要，再一起了解選擇。", "I’m scared too and unsure how to help. I want to hear what she needs and explore the options together."],
+  ["依照流程，我们先完成评估，再提供转介与后续安排。", "依照流程，我們先完成評估，再提供轉介與後續安排。", "Following the process, we will assess first, then arrange referrals and follow-up."],
+  ["我们先聊聊最近上课和睡眠的情况，好吗？", "我們先聊聊最近上課和睡眠的情況，好嗎？", "Could we first talk about your classes and sleep lately?"],
+  ["你们怎么没有做好避孕，现在才来着急？", "你們怎麼沒有做好避孕，現在才來著急？", "Why didn’t you use contraception properly and only worry now?"],
+  ["别担心，我会替你把所有事情都安排好。", "別擔心，我會替你把所有事情都安排好。", "Don’t worry. I’ll arrange everything for you."],
+  ["我听见你很害怕；我们会先确认安全，再依你的意愿一起了解每个选择。", "我聽見你很害怕；我們會先確認安全，再依你的意願一起了解每個選擇。", "I hear that you’re scared. We’ll check your safety first, then explore each option according to your wishes."],
+];
+campusStatements.forEach(([source, traditional, english]) => { zhTW[source] = traditional; en[source] = english; });
+
 const dictionaries: Record<Exclude<Locale, "zh-CN">, Record<string, string>> = { "zh-TW": zhTW, en };
 
 export function translate(locale: Locale, source: string) {

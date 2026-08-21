@@ -1,5 +1,10 @@
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_KEY = process.env.SUPABASE_PUBLISHABLE_KEY;
+const EVENT_CODES = new Set(["CARE2026", "UNPLANNED2026"]);
+
+function eventCode(value: unknown) {
+  return typeof value === "string" && EVENT_CODES.has(value) ? value : "CARE2026";
+}
 
 function headers() {
   if (!SUPABASE_URL || !SUPABASE_KEY) throw new Error("Supabase 尚未完成设定");
@@ -10,12 +15,12 @@ function headers() {
   };
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/get_lpl_stats`, {
       method: "POST",
       headers: headers(),
-      body: JSON.stringify({ p_event_code: "CARE2026" }),
+      body: JSON.stringify({ p_event_code: eventCode(new URL(request.url).searchParams.get("eventCode")) }),
       cache: "no-store",
     });
     const data = await response.json();
@@ -39,7 +44,7 @@ export async function POST(request: Request) {
         p_stance: body.stance ?? null,
         p_dialogue: body.dialogue ?? null,
         p_stage: body.stage ?? "role",
-        p_event_code: "CARE2026",
+        p_event_code: eventCode(body.eventCode),
       }),
       cache: "no-store",
     });
